@@ -1,0 +1,56 @@
+const body = document.body;
+const container = document.createElement('div');
+container.style.textAlign = 'center';
+body.appendChild(container);
+const users = [];
+
+function registerUser(email, role) {
+  const user = { email, role, loans: [], payments: [] };
+  users.push(user);
+  return user;
+}
+
+
+function requestLoan(user, amount, months) {
+  const interestRate = months * 0.1; 
+  const totalAmount = amount + (amount * interestRate);
+  const loan = { amount: totalAmount, months, status: 'pending' };
+  user.loans.push(loan);
+  return loan;
+}
+
+function confirmPayment(user, loan) {
+  if (user.role === 'lender') {
+    loan.status = 'paid';
+    user.payments.push(loan.amount);
+  }
+}
+
+function adminViewTransactions() {
+  if (users.some(user => user.role === 'admin')) {
+    console.log(users);
+  } else {
+    console.log("No admin user found.");
+  }
+}
+
+
+const userRole = prompt('Select your role (admin, borrower, lender):');
+const currentUser = registerUser('example@example.com', userRole);
+
+if (userRole === 'borrower') {
+  const amount = parseFloat(prompt('Enter the loan amount:'));
+  const months = parseInt(prompt('Enter the number of months to repay:'));
+  const loan = requestLoan(currentUser, amount, months);
+  console.log(`Loan requested: ${loan.amount} INR for ${loan.months} months.`);
+} else if (userRole === 'lender') {
+  confirmPayment(currentUser, currentUser.loans[0]);
+  console.log(`Loan confirmed as paid.`);
+} else if (userRole === 'admin') {
+  adminViewTransactions();
+} else {
+  console.log('Invalid role.');
+}
+
+console.log(currentUser);
+
